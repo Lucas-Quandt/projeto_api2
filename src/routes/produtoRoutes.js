@@ -5,5 +5,6 @@ const produtoController = require('../controllers/produtoController');
 router.get('/', produtoController.listarProdutos);
 router.get('/:id', produtoController.buscarProdutoPorId);
 router.post('/', produtoController.criarProduto); 
+router.get('/cpf/:cpf', pessoaController.buscaPessoaPorCpf);
 
 module.exports = router;

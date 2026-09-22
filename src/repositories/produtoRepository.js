@@ -1,7 +1,6 @@
 const pool = require('../config/db');
 
 const getAllProdutos = async ()=> {
-    console.log("cheguei no repository")
     const sql = 'SELECT * FROM produtos';
     const resultado = await pool.query(sql);
     return resultado.rows;
