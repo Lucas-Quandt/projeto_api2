@@ -47,8 +47,63 @@ const criarProduto = async (request, response) => {
     }
 };
 
+const atualizarProduto = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id); // Tenta converter o ID da URL para número
+        
+        // 1ª Barreira: Verifica se o ID é realmente um número válido
+        if (isNaN(id)) {
+            return res.status(400).json({ mensagem: 'O ID informado na URL é inválido.' });
+        }
+
+        const { nome, preco, descricao } = req.body;
+        
+        // 2ª Barreira: Impede a atualização incompleta
+        if (!nome || !preco || !descricao) {
+            return res.status(400).json({ 
+                mensagem: 'Para atualizar, você deve enviar nome, preco e descricao obrigatoriamente.' 
+            });
+        }
+        
+        const resultado = await ProdutoRepository.updateProduto(id, nome, preco, descricao);
+        
+        // 3ª Barreira: Verifica se o produto realmente existia no banco
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({ mensagem: 'Produto não encontrado no banco de dados.' });
+        }
+        
+        res.json(resultado.rows[0]);
+    } catch (erro) {
+        console.error(erro.message);
+        res.status(500).json({ mensagem: 'Erro ao atualizar' });
+    }
+};
+
+const deletarProduto = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) return res.status(400).json({ mensagem: 'O ID informado na URL é inválido.' });
+
+        const resultado = await ProdutoRepository.deleteProduto(id);
+        
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({ mensagem: 'Produto não encontrado para exclusão' });
+        }
+        
+        res.json({ 
+            mensagem: 'Produto deletado com sucesso', 
+            deletado: resultado.rows[0] 
+        });
+    } catch (erro) {
+        console.error(erro.message);
+        res.status(500).json({ mensagem: 'Erro ao deletar' });
+    }
+};
+
 module.exports = {
     listarProdutos,
     buscarProdutoPorId,
-    criarProduto
+    criarProduto,
+    atualizarProduto,
+    deletarProduto
 };

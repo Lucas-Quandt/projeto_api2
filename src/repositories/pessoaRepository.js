@@ -31,6 +31,8 @@ const createPessoa = async (nome, email, telefone, cpf, senha) => {
     return resultado.rows[0];
 };
 
+
+
 // ACOPLAMENTO: Exporta as funções
 module.exports = {
     getAllPessoas,
