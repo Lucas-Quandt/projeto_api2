@@ -5,8 +5,8 @@ const pool = require('../config/db');
 
 // Busca todas as pessoas
 const getAllPessoas = async () => {
-    const sql = 'SELECT * FROM pessoas';
-    const resultado = await pool.query(sql);
+    const sql = 'SELECT * FROM pessoas ORDER BY id LIMIT $1 OFFSET $2';
+    const resultado = await pool.query(sql, [limit, offset]);
     return resultado.rows;
 };
 

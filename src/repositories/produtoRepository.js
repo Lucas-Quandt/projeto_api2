@@ -1,8 +1,8 @@
 const pool = require('../config/db');
 
 const getAllProdutos = async ()=> {
-    const sql = 'SELECT * FROM produtos';
-    const resultado = await pool.query(sql);
+    const sql = 'SELECT * FROM produtos ORDER BY id LIMIT $1 OFFSET $2';
+    const resultado = await pool.query(sql, [limit, offset]);
     return resultado.rows;
 };
 

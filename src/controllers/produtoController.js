@@ -1,16 +1,28 @@
 const ProdutoRepository = require('../repositories/produtoRepository');
 
-const listarProdutos = async (request, response) => {
-    console.log("cheguei no controller")
-    try{
-        const resultado = await ProdutoRepository.getAllProdutos();
-        console.log(resultado);
-        response.json(resultado);
-    }catch(erro){
-        console.error(erro.message)
-        response.status(500).json({mensagem:'Error Interno.'});   
+const listarProdutos = async (req, res) => {
+    try {
+        // Captura da URL: http://localhost:3000/produtos?page=1&limit=10
+        // Se o usuário não mandar nada, o padrão será página 1, com 10 itens.
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        
+        // Matemática da paginação: (página - 1) * limite
+        const offset = (page - 1) * limit;
+
+        const produtos = await ProdutoRepository.getAllProdutos(limit, offset);
+        
+        // Retornamos um objeto mais rico, avisando o usuário em qual página ele está
+        res.json({
+            paginaAtual: page,
+            itensPorPagina: limit,
+            quantidadeRetornada: produtos.length,
+            dados: produtos
+        });
+    } catch (erro) {
+        console.error(erro.message);
+        res.status(500).json({ mensagem: 'Erro interno' });
     }
-   
 };
 
 // Buscar por ID

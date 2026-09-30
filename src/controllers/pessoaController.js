@@ -3,8 +3,18 @@ const PessoaRepository = require('../repositories/pessoaRepository');
 
 const listarPessoas = async (req, res) => {
     try {
-        const pessoas = await PessoaRepository.getAllPessoas();
-        res.json(pessoas);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const pessoas = await PessoaRepository.getAllPessoas(limit, offset);
+        
+        res.json({
+            paginaAtual: page,
+            itensPorPagina: limit,
+            quantidadeRetornada: pessoas.length,
+            dados: pessoas
+        });
     } catch (erro) {
         console.error('Erro ao buscar pessoas:', erro.message);
         res.status(500).json({ mensagem: 'Erro interno ao buscar pessoas' });
